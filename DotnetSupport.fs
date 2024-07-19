@@ -1,8 +1,9 @@
 [<AutoOpen>]
 module Flux.DotNetSupport
+
 open System
 
-let fromFunc0 (f: Func<_>) = fun () -> f.Invoke()
+let fromFunc0 (f: Func<_>) = fun () -> f.Invoke ()
 
 let fromFunc1 (f: Func<_, _>) = f.Invoke
 
