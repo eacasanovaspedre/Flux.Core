@@ -3,6 +3,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <PackageId>Flux.Core</PackageId>
         <Version>$(PackageVersion)</Version>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Authors>Enrique Casanovas</Authors>
         <Company>The Otter Side</Company>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
