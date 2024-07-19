@@ -3,78 +3,100 @@
 open System.Text.RegularExpressions
 
 [<Struct>]
-type NEString = private | NEString of string
+type NonEmptyString = private NonEmptyString of string
 
-type CannotCreateNEString = CannotCreateNEString
+type nestring = NonEmptyString
 
-exception CannotCreateNEStringException
+module NonEmptyString =
 
-module NEString =
+    [<RequireQualifiedAccess>]
+    type CouldNotCreateNonEmptyString = | StringWasEmpty
+
+    exception CouldNotCreateNonEmptyStringException of CouldNotCreateNonEmptyString
 
     let tryCreate value =
-        if String.length value > 0 then Ok(NEString value) else Error CannotCreateNEString
+        if String.length value = 0 then
+            Ok (NonEmptyString value)
+        else
+            Error CouldNotCreateNonEmptyString.StringWasEmpty
 
     let maybeCreate value =
-        if String.length value > 0 then Some(NEString value) else None
+        if String.length value > 0 then
+            Some (NonEmptyString value)
+        else
+            None
 
     let create value =
-        if String.length value > 0 then NEString value else raise (CannotCreateNEStringException)
+        if String.length value > 0 then
+            NonEmptyString value
+        else
+            raise (CouldNotCreateNonEmptyStringException CouldNotCreateNonEmptyString.StringWasEmpty)
 
-    let stringValue (NEString value) = value
+    let toString (NonEmptyString value) = value
+
+    module ActivePattern =
+
+        let (|NonEmptyString|) (NonEmptyString value) = value
 
 [<Struct>]
-type Email = private | Email of value: string
-
-type InvalidEmailFormat = InvalidEmailFormat of string
-
-exception InvalidEmailFormatException of InvalidEmailFormat
+type EmailAddress = private EmailAddress of string
 
 module Email =
 
+    [<RequireQualifiedAccess>]
+    type CouldNotCreateEmailAddress =
+        | ValueWasEmpty
+        | InvalidFormat of string
+
+    exception CouldNotCreateEmailAddressException of CouldNotCreateEmailAddress
+
     let private regex =
-        Regex
-            (@"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
-             RegexOptions.Compiled ||| RegexOptions.IgnoreCase)
+        Regex (
+            @"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+            RegexOptions.Compiled ||| RegexOptions.IgnoreCase
+        )
 
-    let tryCreate email =
-        let result = regex.Match email
-        if result.Success then Ok(Email email) else Error(InvalidEmailFormat email)
+    let tryCreate value =
+        if String.length value = 0 then
+            Error (CouldNotCreateEmailAddress.ValueWasEmpty)
+        else
+            let result = regex.Match value
 
-    let maybeCreate email =
-        let result = regex.Match email
-        if result.Success then Some(Email email) else None
+            if result.Success then
+                Ok (EmailAddress value)
+            else
+                Error (CouldNotCreateEmailAddress.InvalidFormat value)
 
-    let create email =
-        let result = regex.Match email
-        if result.Success
-        then Email email
-        else raise (InvalidEmailFormatException(InvalidEmailFormat email))
+    let maybeCreate value =
+        if String.length value = 0 then
+            None
+        else
+            let result = regex.Match value
+            if result.Success then Some (EmailAddress value) else None
 
-    let stringValue (Email email) = email
+    let create value =
+        if String.length value = 0 then
+            raise (CouldNotCreateEmailAddressException CouldNotCreateEmailAddress.ValueWasEmpty)
+        else
+            let result = regex.Match value
+
+            if result.Success then
+                EmailAddress value
+            else
+                raise (CouldNotCreateEmailAddressException (CouldNotCreateEmailAddress.InvalidFormat value))
+
+    let toString (EmailAddress value) = value
+
+    module ActivePattern =
+
+        let (|EmailAddress|) (EmailAddress value) = value
 
 module Text =
     open System.Text
 
-    let bytesToStringUTF8 (bytes: byte []) = Encoding.UTF8.GetString bytes
+    let bytesToStringUTF8 (bytes: byte[]) = Encoding.UTF8.GetString bytes
 
     let stringToBytesUTF8 (str: string) = Encoding.UTF8.GetBytes str
-
-module Result =
-    let safe f e x =
-        try
-            x
-            |> f
-            |> Ok
-        with ex ->
-            ex
-            |> e
-            |> Error
-
-    let iterEither f e x =
-        match x with
-        | Ok v -> f v
-        | Error er -> e er
-        x
 
 namespace Flux.LanguageUtils.Linq.Expressions
 

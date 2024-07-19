@@ -5,3 +5,23 @@ paket-files
 logs/
 out/
 .fake
+.vs
+.idea
+
+### VisualStudioCode ###
+.vscode/
+.vs/
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+#MacOS files
+*.DS_Store
