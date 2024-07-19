@@ -5,7 +5,7 @@
         <Version>$(PackageVersion)</Version>
         <Authors>Enrique Casanovas</Authors>
         <Company>The Otter Side</Company>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="DotnetSupport.fs" />
