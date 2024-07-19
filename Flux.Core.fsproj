@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <PackageId>Flux.Core</PackageId>
-        <Version>2.0.0</Version>
+        <Version>$(PackageVersion)</Version>
         <Authors>Enrique Casanovas</Authors>
         <Company>The Otter Side</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
