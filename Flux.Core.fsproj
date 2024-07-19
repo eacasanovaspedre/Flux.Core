@@ -9,6 +9,7 @@
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     </PropertyGroup>
     <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
         <Compile Include="DotnetSupport.fs" />
         <Compile Include="Core.fs" />
     </ItemGroup>
